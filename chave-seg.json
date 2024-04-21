@@ -1,0 +1,41 @@
+{
+    "parameterSets": {
+        "default": {
+            "$fa": "1",
+            "$fs": "0.4",
+            "altura_contato": "18",
+            "altura_porca_parafuso_chave": "2.5",
+            "altura_porca_parafuso_fecha": "2.5",
+            "com_buraco_parafuso": "false",
+            "comprimento_contato": "1",
+            "comprimento_mola": "7",
+            "comprimento_parafuso_chave_cabeca": "3.5",
+            "comprimento_parafuso_fecha_cabeca": "3.5",
+            "comprimento_placa_chave": "12",
+            "comprimento_placa_in": "9",
+            "comprimento_placa_out": "9",
+            "corrente_maxima_esperada": "10",
+            "diametro_mola": "6",
+            "diametro_parafuso_chave": "3.3",
+            "diametro_parafuso_chave_cabeca": "6",
+            "diametro_parafuso_fecha": "3.3",
+            "diametro_parafuso_fecha_cabeca": "6.2",
+            "espessura_chao": "1",
+            "espessura_parede": "8",
+            "espessura_placa": "2",
+            "espessura_tampa": "5",
+            "largura_contato": "9",
+            "largura_placa": "8",
+            "largura_porca_parafuso_chave": "6",
+            "largura_porca_parafuso_fecha": "6",
+            "offset_de_parede": "0.001",
+            "pitch_parafuso_chave": "0.5",
+            "pitch_parafuso_fecha": "0.5",
+            "potencia_maxima_permitida": "1",
+            "tamanho_gap_chave": "1"
+        }
+    },
+    "fileFormatVersion": "1",
+    "parameterSets": "",
+    "parameterSets": ""
+}
