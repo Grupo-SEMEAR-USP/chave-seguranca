@@ -3,7 +3,7 @@
         "default": {
             "$fa": "1",
             "$fs": "0.4",
-            "altura_contato": "18",
+            "altura_contato": "6",
             "altura_porca_parafuso_chave": "2.5",
             "altura_porca_parafuso_fecha": "2.5",
             "com_buraco_parafuso": "false",
@@ -36,6 +36,7 @@
         }
     },
     "fileFormatVersion": "1",
+    "parameterSets": "",
     "parameterSets": "",
     "parameterSets": ""
 }

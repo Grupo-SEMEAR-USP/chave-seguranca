@@ -12,12 +12,11 @@ offset_de_parede = 0.001;
 espessura_parede = 8;
 espessura_tampa = 5;
 espessura_chao = 1;
-tamanho_gap_chave = 1;
 
 //// Parametros do contato com as placas de IO
 
 largura_contato = 9;
-altura_contato = 18;
+altura_contato = 6;
 
 //// Parametros do parafuso da chave
 diametro_parafuso_chave_cabeca = 6;
@@ -38,7 +37,7 @@ assert(diametro_mola > diametro_parafuso_chave, "Buraco da mola esta menor que o
 diametro_parafuso_fecha_cabeca = 6.2;
 diametro_parafuso_fecha = 3.3;
 comprimento_parafuso_fecha_cabeca = 3.5;
-comprimento_parafuso_fecha = 12 - comprimento_parafuso_fecha_cabeca;
+comprimento_parafuso_fecha = 12.5 - comprimento_parafuso_fecha_cabeca;
 pitch_parafuso_fecha = .5;
 largura_porca_parafuso_fecha = 6;
 altura_porca_parafuso_fecha = 2.5;
@@ -47,6 +46,7 @@ assert(espessura_parede*2 > diametro_parafuso_fecha, "Buraco dos parafusos de fe
 assert(espessura_parede*2 > diametro_parafuso_fecha_cabeca, "Buraco para a cabeca dos parafusos de fecha esta maior que a parede da chave!");
 
 //// Parametros das placas da chave
+tamanho_gap_chave = 1;
 largura_placa = 8;
 espessura_placa = 2; //.5
 comprimento_placa_in = 9;
@@ -54,6 +54,7 @@ comprimento_placa_out = 9;
 comprimento_placa_chave = 12;
 comprimento_contato = 1;
 comprimento_gap = comprimento_placa_chave - 2*comprimento_contato;
+comprimento_espaco_placas = 2*espessura_placa + tamanho_gap_chave;
 
 echo("Gap entre placas de ", comprimento_gap, " mm");
 assert(comprimento_gap > diametro_mola, "Buraco da mola esta intercionando as placas de contato!");
@@ -86,8 +87,9 @@ comprimento = comprimento_placas // Comprimento devido as placas
 largura = largura_placa // Largura devida a largura da placa
 	+ 2*espessura_parede; // Largura devido a espessura da parede
 ////Altura
-altura = comprimento_parafuso_chave // Altura devido ao comprimento do parafuso
-       + 2*espessura_tampa; // Altura devido a espessura da parede
+altura_corpo =  comprimento_parafuso_chave + comprimento_espaco_placas;// Altura devido ao comprimento do parafuso e o gap que ele tem que atravesar para fechar o circuito
+
+altura = altura_corpo + 2*espessura_tampa; // Altura devido a espessura da parede
 
 //Confeccao do Modelo 3D
 ////Base da chave
@@ -96,23 +98,22 @@ cube([comprimento, largura, espessura_chao + offset_de_parede], anchor=BOTTOM);
 ////Corpo da chave
 translate([0,0,espessura_chao]){
 	difference(){
-		cube([comprimento, largura, comprimento_parafuso_chave], anchor=BOTTOM);
+		cube([comprimento, largura, altura_corpo], anchor=BOTTOM);
 		//Buraco do parafuso
 		if(com_buraco_parafuso){
-			threaded_rod(d=diametro_parafuso_chave, height=comprimento_parafuso_chave + offset_de_parede, pitch=pitch_parafuso_chave, anchor=BOTTOM);
+			threaded_rod(d=diametro_parafuso_chave, height=altura_corpo + offset_de_parede, pitch=pitch_parafuso_chave, anchor=BOTTOM);
 		}
 		else{
-			cylinder(comprimento_parafuso_chave + offset_de_parede, d=diametro_parafuso_chave, anchor=BOTTOM);
-			translate([0,0, (comprimento_parafuso_chave + offset_de_parede)/4])
+			cylinder(altura_corpo + offset_de_parede, d=diametro_parafuso_chave, anchor=BOTTOM);
+			translate([0,0, offset_de_parede + altura_porca_parafuso_chave/2])
 			cube([largura_porca_parafuso_chave,largura_porca_parafuso_chave,altura_porca_parafuso_chave], anchor=CENTER);
 
 		}
 
 		//Espaco para as placas de metal
-		tamanho_espaco_placas = 2*espessura_placa + tamanho_gap_chave;
-		inicio_do_espaco_placas = comprimento_parafuso_chave - tamanho_espaco_placas + offset_de_parede;
+		inicio_do_espaco_placas = altura_corpo - comprimento_espaco_placas + offset_de_parede;
 		translate([0,0, inicio_do_espaco_placas])
-			cube([comprimento_placas, largura_placa, tamanho_espaco_placas], anchor=BOTTOM);
+			cube([comprimento_placas, largura_placa, comprimento_espaco_placas], anchor=BOTTOM);
 
 		//Buraco para as placas de IN e OUT
 		inicio_buraco_placa_inout = inicio_do_espaco_placas + offset_de_parede - espessura_placa;
@@ -140,16 +141,17 @@ translate([0,0,espessura_chao]){
 			cylinder(comprimento_mola + offset_de_parede, d=diametro_mola, anchor=BOTTOM);
 
 		//Buracos pafarafusos para fechar
+		comprimento_sobrando_para_parafuso_fechar = comprimento_parafuso_fecha + espessura_tampa - comprimento_parafuso_fecha_cabeca;
 		for (i = [0:1], j = [0:1]) {
-			translate([(-1)^i * (comprimento - espessura_parede) / 2, (-1)^j * (largura - espessura_parede) / 2, comprimento_parafuso_chave - comprimento_parafuso_fecha + espessura_tampa ])
+			translate([(-1)^i * (comprimento - espessura_parede) / 2, (-1)^j * (largura - espessura_parede) / 2, altura_corpo - comprimento_parafuso_fecha + espessura_tampa ])
 			{
 				if(com_buraco_parafuso){
-				threaded_rod(d=diametro_parafuso_fecha, height=comprimento_parafuso_fecha - espessura_tampa + offset_de_parede, pitch=pitch_parafuso_fecha, anchor=BOTTOM);
+				threaded_rod(d=diametro_parafuso_fecha, height=comprimento_sobrando_para_parafuso_fechar + offset_de_parede, pitch=pitch_parafuso_fecha, anchor=BOTTOM);
 				}
 				else{
-			        cylinder(comprimento_parafuso_fecha - espessura_tampa + offset_de_parede, d=diametro_parafuso_fecha, anchor=BOTTOM);
-				translate([0,0, (comprimento_parafuso_fecha - espessura_tampa)/2])
-				cube([largura_porca_parafuso_fecha,largura_porca_parafuso_fecha,altura_porca_parafuso_fecha], anchor=CENTER);
+			        cylinder(comprimento_sobrando_para_parafuso_fechar + offset_de_parede, d=diametro_parafuso_fecha, anchor=BOTTOM);
+				translate([0,0, altura_porca_parafuso_fecha/2])
+				cube([largura_porca_parafuso_fecha,largura_porca_parafuso_fecha, altura_porca_parafuso_fecha], anchor=CENTER);
 				}
 			}
 		}
