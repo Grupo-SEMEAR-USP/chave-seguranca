@@ -4,7 +4,8 @@ include <BOSL2/threading.scad>
 $fa = 1;
 $fs = 0.4;
 
-com_buraco_parafuso = false;
+com_buraco_parafuso_chave = false;
+com_buraco_parafuso_fecha = false;
 
 offset_de_parede = 0.001;
 //Parametros (mm)
@@ -100,7 +101,7 @@ translate([0,0,espessura_chao]){
 	difference(){
 		cube([comprimento, largura, altura_corpo], anchor=BOTTOM);
 		//Buraco do parafuso
-		if(com_buraco_parafuso){
+		if(com_buraco_parafuso_chave){
 			threaded_rod(d=diametro_parafuso_chave, height=altura_corpo + offset_de_parede, pitch=pitch_parafuso_chave, anchor=BOTTOM);
 		}
 		else{
@@ -145,7 +146,7 @@ translate([0,0,espessura_chao]){
 		for (i = [0:1], j = [0:1]) {
 			translate([(-1)^i * (comprimento - espessura_parede) / 2, (-1)^j * (largura - espessura_parede) / 2, altura_corpo - comprimento_parafuso_fecha + espessura_tampa ])
 			{
-				if(com_buraco_parafuso){
+				if(com_buraco_parafuso_fecha){
 				threaded_rod(d=diametro_parafuso_fecha, height=comprimento_sobrando_para_parafuso_fechar + offset_de_parede, pitch=pitch_parafuso_fecha, anchor=BOTTOM);
 				}
 				else{
