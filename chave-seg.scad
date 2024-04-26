@@ -6,11 +6,13 @@ $fs = 0.4;
 
 com_buraco_parafuso_chave = false;
 com_buraco_parafuso_fecha = false;
+buraco_fecha_alternativo = true;
 
 offset_de_parede = 0.001;
 //Parametros (mm)
 //// Parametros fisicos da chave
-espessura_parede = 8;
+espessura_parede_c = 8; // comprimento
+espessura_parede_l = 3; // largura
 espessura_tampa = 5;
 espessura_chao = 1;
 
@@ -27,6 +29,7 @@ comprimento_parafuso_chave = 15 - comprimento_parafuso_chave_cabeca;
 pitch_parafuso_chave = .5;
 largura_porca_parafuso_chave = 6;
 altura_porca_parafuso_chave = 2.5;
+pos_porca_parafuso_chave_offset = 0.75;
 
 //// Parametros da mola da chave
 diametro_mola = 6;
@@ -42,9 +45,10 @@ comprimento_parafuso_fecha = 12.5 - comprimento_parafuso_fecha_cabeca;
 pitch_parafuso_fecha = .5;
 largura_porca_parafuso_fecha = 6;
 altura_porca_parafuso_fecha = 2.5;
+pos_porca_parafuso_fecha_offset = 0;
 
-assert(espessura_parede*2 > diametro_parafuso_fecha, "Buraco dos parafusos de fecha esta maior que a parede da chave!");
-assert(espessura_parede*2 > diametro_parafuso_fecha_cabeca, "Buraco para a cabeca dos parafusos de fecha esta maior que a parede da chave!");
+assert(espessura_parede_c*2 > diametro_parafuso_fecha, "Buraco dos parafusos de fecha esta maior que a parede da chave!");
+assert(espessura_parede_c*2 > diametro_parafuso_fecha_cabeca, "Buraco para a cabeca dos parafusos de fecha esta maior que a parede da chave!");
 
 //// Parametros das placas da chave
 tamanho_gap_chave = 1;
@@ -83,10 +87,10 @@ assert(potencia_total < potencia_maxima_permitida, "Potencia total acima da maxi
 ////Comprimento
 comprimento_placas = comprimento_placa_in + comprimento_gap + comprimento_placa_out;
 comprimento = comprimento_placas // Comprimento devido as placas
-	    + 2*espessura_parede; // Comprimento devido a espessura da parede
+	    + 2*espessura_parede_c; // Comprimento devido a espessura da parede
 ////Largura
 largura = largura_placa // Largura devida a largura da placa
-	+ 2*espessura_parede; // Largura devido a espessura da parede
+	+ 2*espessura_parede_l; // Largura devido a espessura da parede
 ////Altura
 altura_corpo =  comprimento_parafuso_chave + comprimento_espaco_placas;// Altura devido ao comprimento do parafuso e o gap que ele tem que atravesar para fechar o circuito
 
@@ -106,7 +110,7 @@ translate([0,0,espessura_chao]){
 		}
 		else{
 			cylinder(altura_corpo + offset_de_parede, d=diametro_parafuso_chave, anchor=BOTTOM);
-			translate([0,0, offset_de_parede + altura_porca_parafuso_chave/2])
+			translate([0,0, offset_de_parede + altura_porca_parafuso_chave/2 + pos_porca_parafuso_chave_offset])
 			cube([largura_porca_parafuso_chave,largura_porca_parafuso_chave,altura_porca_parafuso_chave], anchor=CENTER);
 
 		}
@@ -128,13 +132,13 @@ translate([0,0,espessura_chao]){
 
 		//Buraco dos contatos para as placas IN e OUT
 
-		translate([0,largura/2 - espessura_parede/2, inicio_buraco_placa_inout + espessura_placa/2]){
+		translate([0,largura/2 - espessura_parede_l/2, inicio_buraco_placa_inout + espessura_placa/2]){
 			//// IN
 			translate([-offset_buraco_placa_inout,0,0])
-				cube([largura_contato,espessura_parede + 2*offset_de_parede, altura_contato], anchor=BOTTOM);
+				cube([largura_contato,espessura_parede_l + 2*offset_de_parede, altura_contato], anchor=BOTTOM);
 			//// OUT
 			translate([offset_buraco_placa_inout,0,0])
-				cube([largura_contato,espessura_parede + 2*offset_de_parede, altura_contato], anchor=BOTTOM);
+				cube([largura_contato,espessura_parede_l + 2*offset_de_parede, altura_contato], anchor=BOTTOM);
 		}
 
 		//Buraco da mola
@@ -143,26 +147,43 @@ translate([0,0,espessura_chao]){
 
 		//Buracos pafarafusos para fechar
 		comprimento_sobrando_para_parafuso_fechar = comprimento_parafuso_fecha + espessura_tampa - comprimento_parafuso_fecha_cabeca;
-		for (i = [0:1], j = [0:1]) {
-			translate([(-1)^i * (comprimento - espessura_parede) / 2, (-1)^j * (largura - espessura_parede) / 2, altura_corpo - comprimento_parafuso_fecha + espessura_tampa ])
+		if(buraco_fecha_alternativo)
+		{
+		for (i = [0:1]) {
+			translate([(-1)^i * (comprimento - espessura_parede_c) / 2, 0, altura_corpo - comprimento_parafuso_fecha + espessura_tampa ])
 			{
 				if(com_buraco_parafuso_fecha){
 				threaded_rod(d=diametro_parafuso_fecha, height=comprimento_sobrando_para_parafuso_fechar + offset_de_parede, pitch=pitch_parafuso_fecha, anchor=BOTTOM);
 				}
 				else{
 			        cylinder(comprimento_sobrando_para_parafuso_fechar + offset_de_parede, d=diametro_parafuso_fecha, anchor=BOTTOM);
-				translate([0,0, altura_porca_parafuso_fecha/2])
+				translate([0,0, altura_porca_parafuso_fecha/2 + pos_porca_parafuso_fecha_offset])
 				cube([largura_porca_parafuso_fecha,largura_porca_parafuso_fecha, altura_porca_parafuso_fecha], anchor=CENTER);
 				}
 			}
 		}
-
-
+		}
+		else
+		{
+		for (i = [0:1], j = [0:1]) {
+			translate([(-1)^i * (comprimento - espessura_parede_c) / 2, (-1)^j * (largura - espessura_parede_l) / 2, altura_corpo - comprimento_parafuso_fecha + espessura_tampa ])
+			{
+				if(com_buraco_parafuso_fecha){
+				threaded_rod(d=diametro_parafuso_fecha, height=comprimento_sobrando_para_parafuso_fechar + offset_de_parede, pitch=pitch_parafuso_fecha, anchor=BOTTOM);
+				}
+				else{
+			        cylinder(comprimento_sobrando_para_parafuso_fechar + offset_de_parede, d=diametro_parafuso_fecha, anchor=BOTTOM);
+				translate([0,0, altura_porca_parafuso_fecha/2 + pos_porca_parafuso_chave_offset])
+				cube([largura_porca_parafuso_fecha,largura_porca_parafuso_fecha, altura_porca_parafuso_fecha], anchor=CENTER);
+				}
+			}
+		}
+		}
 	}
 }
 
 //// Tampa da Chave
-translate([largura*2,0,0,]){
+translate([comprimento*1.25,0,0,]){
 	difference(){
 	cube([comprimento, largura, espessura_tampa], anchor=BOTTOM);
 
@@ -171,13 +192,26 @@ translate([largura*2,0,0,]){
 		cylinder(d=diametro_parafuso_chave_cabeca * 1.1, h= espessura_tampa + offset_de_parede*2, anchor=BOTTOM);
 
 	//Buracos pafarafusos para fechar
-	for (i = [0:1], j = [0:1]) {
-		translate([(-1)^i * (comprimento - espessura_parede) / 2, (-1)^j * (largura - espessura_parede) / 2, 0]){
+	if(buraco_fecha_alternativo)
+	{
+	for (i = [0:1]) {
+		translate([(-1)^i * (comprimento - espessura_parede_c) / 2, 0 , 0]){
 			translate([0,0,-offset_de_parede])
 				cylinder(d=diametro_parafuso_fecha * 1.1, h=espessura_tampa + offset_de_parede*2, anchor=BOTTOM);
 			translate([0,0,espessura_tampa - comprimento_parafuso_fecha_cabeca])
 				cylinder(d=diametro_parafuso_fecha_cabeca, h=comprimento_parafuso_fecha_cabeca + offset_de_parede, anchor=BOTTOM);
 		}
+	}
+	}
+	else {
+	for (i = [0:1], j = [0:1]) {
+		translate([(-1)^i * (comprimento - espessura_parede_c) / 2, (-1)^j * (largura - espessura_parede_l) / 2, 0]){
+			translate([0,0,-offset_de_parede])
+				cylinder(d=diametro_parafuso_fecha * 1.1, h=espessura_tampa + offset_de_parede*2, anchor=BOTTOM);
+			translate([0,0,espessura_tampa - comprimento_parafuso_fecha_cabeca])
+				cylinder(d=diametro_parafuso_fecha_cabeca, h=comprimento_parafuso_fecha_cabeca + offset_de_parede, anchor=BOTTOM);
+		}
+	}
 	}
 	}
 }
