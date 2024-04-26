@@ -25,11 +25,11 @@ altura_contato = 6;
 diametro_parafuso_chave_cabeca = 6;
 diametro_parafuso_chave = 3.3;
 comprimento_parafuso_chave_cabeca = 3.5;
-comprimento_parafuso_chave = 15 - comprimento_parafuso_chave_cabeca;
+comprimento_parafuso_chave = 18 - comprimento_parafuso_chave_cabeca;
 pitch_parafuso_chave = .5;
 largura_porca_parafuso_chave = 6;
 altura_porca_parafuso_chave = 2.5;
-pos_porca_parafuso_chave_offset = 0.75;
+pos_porca_parafuso_chave_offset = 3;
 
 //// Parametros da mola da chave
 diametro_mola = 6;
@@ -41,11 +41,11 @@ assert(diametro_mola > diametro_parafuso_chave, "Buraco da mola esta menor que o
 diametro_parafuso_fecha_cabeca = 6.2;
 diametro_parafuso_fecha = 3.3;
 comprimento_parafuso_fecha_cabeca = 3.5;
-comprimento_parafuso_fecha = 12.5 - comprimento_parafuso_fecha_cabeca;
+comprimento_parafuso_fecha = 15.5 - comprimento_parafuso_fecha_cabeca;
 pitch_parafuso_fecha = .5;
 largura_porca_parafuso_fecha = 6;
 altura_porca_parafuso_fecha = 2.5;
-pos_porca_parafuso_fecha_offset = 0;
+pos_porca_parafuso_fecha_offset = 2;
 
 assert(espessura_parede_c*2 > diametro_parafuso_fecha, "Buraco dos parafusos de fecha esta maior que a parede da chave!");
 assert(espessura_parede_c*2 > diametro_parafuso_fecha_cabeca, "Buraco para a cabeca dos parafusos de fecha esta maior que a parede da chave!");
@@ -95,6 +95,8 @@ largura = largura_placa // Largura devida a largura da placa
 altura_corpo =  comprimento_parafuso_chave + comprimento_espaco_placas;// Altura devido ao comprimento do parafuso e o gap que ele tem que atravesar para fechar o circuito
 
 altura = altura_corpo + 2*espessura_tampa; // Altura devido a espessura da parede
+
+echo("Comprimento = ", comprimento, " mm, Largura = ", largura, "mm, Altura = ", altura, " mm");
 
 //Confeccao do Modelo 3D
 ////Base da chave
